@@ -79,7 +79,7 @@
   	</copy>
   	<jar destfile="salicense.jar" basedir="bld" />
   	<zip destfile="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="salicense.jar" />
-  	<checksum file="sad-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
+  	<checksum file="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
   	<replace file="sagetv.plugin.xml" token="@@JAR_MD5@@" value="${bin.jar.md5}" />
   	<zip destfile="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" basedir="plugin" />
   	<checksum file="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" property="bin.conf.md5" />
