@@ -15,6 +15,8 @@
  */
 package com.google.code.sagetvaddons.license;
 
+import org.apache.log4j.PropertyConfigurator;
+
 import sage.SageTVPlugin;
 import sage.SageTVPluginRegistry;
 import sagex.plugin.AbstractPlugin;
@@ -30,6 +32,10 @@ public final class Plugin extends AbstractPlugin {
 	static final String PROP_EMAIL = "sagetvaddons/license/email";
 	static final String PROP_FILE = "sagetvaddons/licesne/file";
 	
+	static {
+		PropertyConfigurator.configure("plugins/salicense/salicense.log4j.properties");
+	}
+
 	public Plugin(SageTVPluginRegistry registry) {
 		super(registry);
 		PluginProperty prop = new PluginProperty(SageTVPlugin.CONFIG_TEXT, PROP_EMAIL, "", "Registered Email Address", "The email address associated with your sagetv-addons license file.  Changes to this value are immediate.");
