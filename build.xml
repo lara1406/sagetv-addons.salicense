@@ -77,6 +77,7 @@
   	<copy todir="${base}">
   	  <filelist refid="bins" />
   	</copy>
+  	<copy todir="bld/com/google/code/sagetvaddons/license/" file="src/com/google/code/sagetvaddons/license/sagetv-addons.pub" />
   	<jar destfile="salicense.jar" basedir="bld" />
   	<zip destfile="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="salicense.jar" />
   	<checksum file="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
