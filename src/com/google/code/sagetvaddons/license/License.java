@@ -31,11 +31,11 @@ import java.util.Properties;
 import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import sagex.api.Configuration;
 import sagex.api.PluginAPI;
+import sagex.api.Utility;
 
 /**
  * @author dbattams
@@ -88,7 +88,7 @@ public final class License {
 			LOG.warn(requestor + ": " + err);
 			resp.setLicensed(false);
 			resp.setMessage(err);
-		} else if(!licenseFile.canRead()) {
+		} else if(!Utility.IsFilePath(licenseFile.getAbsolutePath())) {
 			String err = "Cannot read specified license file! [" + licenseFile.getAbsolutePath() + "]";
 			LOG.warn(requestor + ": " + err);
 			resp.setLicensed(false);
@@ -120,7 +120,9 @@ public final class License {
 	}
 
 	private String getLicensedEmail() throws Exception {
-		String data = FileUtils.readFileToString(licenseFile, "UTF-8");
+		String data = Utility.GetFileAsString(licenseFile);
+		if(data == null || data.length() == 0)
+			return null;
 		initKey();
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, key);
