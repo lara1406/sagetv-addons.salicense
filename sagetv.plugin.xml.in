@@ -48,6 +48,16 @@ Most users should NOT need to install this plugin manually.  Other plugins that 
        </Package>
        <ImplementationClass>com.google.code.sagetvaddons.license.Plugin</ImplementationClass>
        <ReleaseNotes><![CDATA[
+======
+v1.0.1
+======
+ 
+Ignore case when comparing email addresses.
+ 
+======
+v1.0.0
+======
+ 
 Initial release.
 	   ]]></ReleaseNotes>
 </SageTVPlugin>

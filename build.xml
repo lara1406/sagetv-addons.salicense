@@ -20,7 +20,7 @@
   <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
   <property name="src.token" value="@@" />
-  <property name="app.ver" value="1.0.0" />
+  <property name="app.ver" value="1.0.1" />
   <property name="app.res.dir" value="plugins/salicense" />
   <property name="src" value="src" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
