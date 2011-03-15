@@ -9,7 +9,7 @@ Most users should NOT need to install this plugin manually.  Other plugins that 
        <Author>Slugger</Author>
        <CreationDate>2011.03.06</CreationDate>
        <ModificationDate>@@MOD_DATE@@</ModificationDate>
-       <Version beta="true">@@VER_NUM@@.@@BLD_NUM@@</Version>
+       <Version>@@VER_NUM@@.@@BLD_NUM@@</Version>
        <ResourcePath>plugins/salicense</ResourcePath>
        <Webpage>http://sagetv-addons.googlecode.com</Webpage>
        <ServerOnly>true</ServerOnly>

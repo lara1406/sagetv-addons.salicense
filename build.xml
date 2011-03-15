@@ -100,7 +100,7 @@
 
   <target name="submit" depends="deliver" description="Submit plugin to SageTV repository">
 	<taskdef classname="com.google.code.sagetvaddons.dev.ant.task.SageTvPluginSubmitter" name="sagesubmit" />
-  	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="sad" reqtype="UPGRADE" descriptor="sagetv.plugin.xml" />
+  	<sagesubmit name="Derek Battams" user="Slugger" email="derek@battams.ca" pluginid="salicense" reqtype="UPGRADE" descriptor="sagetv.plugin.xml" />
   </target>
 
   <target name="clean" depends="rmgensrc" description="Cleans this project">
