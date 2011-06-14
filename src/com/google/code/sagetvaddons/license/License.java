@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.crypto.Cipher;
@@ -43,10 +44,13 @@ import sagex.api.Utility;
  */
 public final class License {
 	static private final Logger LOG = Logger.getLogger(License.class);
+	static private final String EMAIL_PROP = "mail";
+	static private final long PURCHASED_TS = -1L;
+	static private final String LIFETIME_ID = "lifetime";
 
-	static public LicenseResponse isLicensed(String requestor) {
-		LOG.info("Received request from '" + requestor + "'");
-		return new License(requestor).isLicensed();
+	static public LicenseResponse isLicensed(String pluginId) {
+		LOG.info("Received request from '" + pluginId + "' for plugin '" + pluginId + "'");
+		return new License(pluginId).isLicensed();
 	}
 
 	static public void autoConfig(String email, String filePath) {
@@ -55,7 +59,7 @@ public final class License {
 		if(filePath != null && filePath.length() > 0 && "".equals(Configuration.GetServerProperty(Plugin.PROP_FILE, "")))
 			Configuration.SetServerProperty(Plugin.PROP_FILE, filePath);
 	}
-	
+
 	static private boolean isPluginEnabled() {
 		for(Object plugin : PluginAPI.GetInstalledPlugins()) {
 			if(PluginAPI.GetPluginIdentifier(plugin).equals(Plugin.PLUGIN_ID))
@@ -68,6 +72,7 @@ public final class License {
 	private LicenseResponse resp;
 	private String registeredEmail, requestor, filePath;
 	private File licenseFile;
+	private Properties props;
 
 	private License(String requestor) {
 		this.requestor = requestor;
@@ -75,6 +80,12 @@ public final class License {
 		licenseFile = new File(filePath);
 		registeredEmail = Configuration.GetServerProperty(Plugin.PROP_EMAIL, "");
 		resp = new LicenseResponse();
+		props = null;
+		try {
+			getPayload();
+		} catch(Exception e) {
+			props = new Properties();
+		}
 	}
 
 	public LicenseResponse isLicensed() {
@@ -98,31 +109,31 @@ public final class License {
 			resp.setLicensed(false);
 			resp.setMessage(err);
 		} else {
-			try {
-				if(!registeredEmail.toLowerCase().equals(getLicensedEmail().toLowerCase())) {
-					String err = "The registered email ['" + registeredEmail + "'] does not match the email in the license file!";
-					LOG.warn(requestor + ": " + err);
-					resp.setLicensed(false);
-					resp.setMessage(err);
-				} else {
-					resp.setLicensed(true);
-					resp.setMessage("OK");
-					LOG.info(requestor + ": License verified successfully!");
-				}
-			} catch(Exception e) {
-				String err = "Error while processing license request: " + e.getMessage();
-				LOG.warn(requestor + ": Failed", e);
+			if(!registeredEmail.toLowerCase().equals(getLicensedEmail().toLowerCase())) {
+				String err = "The registered email ['" + registeredEmail + "'] does not match the email in the license file!";
+				LOG.warn(requestor + ": " + err);
 				resp.setLicensed(false);
 				resp.setMessage(err);
+			} else if(!isPluginLicenseValid(requestor) && !isPluginLicenseValid(LIFETIME_ID)) {
+				String err = "The license file is not entitled to plugin id '" + requestor + "'";
+				LOG.warn(err);
+				resp.setLicensed(false);
+				resp.setMessage(err);
+			} else {
+				resp.setLicensed(true);
+				resp.setMessage("OK");
+				LOG.info(requestor + ": License verified successfully!");
 			}
 		}
 		return resp;
 	}
 
-	private String getLicensedEmail() throws Exception {
+	private void getPayload() throws Exception {
 		String data = Utility.GetFileAsString(licenseFile);
-		if(data == null || data.length() == 0)
-			return null;
+		if(data == null || data.length() == 0) {
+			LOG.error("License file is empty! [" + licenseFile.getAbsolutePath() + "]");
+			return;
+		}
 		initKey();
 		Cipher cipher = Cipher.getInstance("RSA");
 		cipher.init(Cipher.DECRYPT_MODE, key);
@@ -130,7 +141,20 @@ public final class License {
 		String propsData = new String(cipher.doFinal(Base64.decodeBase64(data.getBytes(utf8))), utf8);
 		Properties props = new Properties();
 		props.load(new StringReader(propsData));
-		return props.getProperty("email");
+		this.props = props;
+	}
+
+	private String getLicensedEmail() {
+		return props.getProperty(EMAIL_PROP);
+	}
+
+	private boolean isPluginLicenseValid(String pluginId) {
+		String ts = props.getProperty(pluginId.toLowerCase());
+
+		if(ts == null || ts.length() == 0 || (!ts.equals(Long.toString(PURCHASED_TS)) && !ts.matches("\\d+")))
+			return false;
+		long expiry = Long.parseLong(ts);
+		return expiry == PURCHASED_TS || new Date(expiry).after(new Date());
 	}
 
 	private void initKey() throws Exception {
