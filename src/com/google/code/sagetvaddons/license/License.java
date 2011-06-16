@@ -109,7 +109,8 @@ public final class License {
 			resp.setLicensed(false);
 			resp.setMessage(err);
 		} else {
-			if(!registeredEmail.toLowerCase().equals(getLicensedEmail().toLowerCase())) {
+			String licensedEmail = getLicensedEmail();
+			if(licensedEmail == null || !registeredEmail.toLowerCase().equals(licensedEmail.toLowerCase())) {
 				String err = "The registered email ['" + registeredEmail + "'] does not match the email in the license file!";
 				LOG.warn(requestor + ": " + err);
 				resp.setLicensed(false);
