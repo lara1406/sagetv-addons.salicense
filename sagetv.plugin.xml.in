@@ -12,7 +12,6 @@ Most users should NOT need to install this plugin manually.  Other plugins that 
        <Version>@@VER_NUM@@.@@BLD_NUM@@</Version>
        <ResourcePath>plugins/salicense</ResourcePath>
        <Webpage>http://sagetv-addons.googlecode.com</Webpage>
-       <ServerOnly>true</ServerOnly>
        <Dependency>
        		<JVM/>
        		<MinVersion>1.5.0</MinVersion>
@@ -48,6 +47,12 @@ Most users should NOT need to install this plugin manually.  Other plugins that 
        </Package>
        <ImplementationClass>com.google.code.sagetvaddons.license.Plugin</ImplementationClass>
        <ReleaseNotes><![CDATA[
+======
+v1.1.1
+======
+ 
+Support for installation of license server on SageClients
+ 
 ======
 v1.1.0
 ======

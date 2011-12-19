@@ -19,6 +19,7 @@ import org.apache.log4j.PropertyConfigurator;
 
 import sage.SageTVPlugin;
 import sage.SageTVPluginRegistry;
+import sagex.api.Global;
 import sagex.api.Utility;
 import sagex.plugin.AbstractPlugin;
 import sagex.plugin.IPropertyValidator;
@@ -33,7 +34,7 @@ public final class Plugin extends AbstractPlugin {
 	static final String PLUGIN_ID = "salicense";
 	static final String PROP_EMAIL = "sagetvaddons/license/email";
 	static final String PROP_FILE = "sagetvaddons/licesne/file";
-	
+
 	static {
 		PropertyConfigurator.configure("plugins/salicense/salicense.log4j.properties");
 	}
@@ -46,15 +47,17 @@ public final class Plugin extends AbstractPlugin {
 				throw new IllegalArgumentException("File '" + val + "' does not exist on the server!");
 		}		
 	}
-	
+
 	public Plugin(SageTVPluginRegistry registry) {
 		super(registry);
-		PluginProperty prop = new PluginProperty(SageTVPlugin.CONFIG_TEXT, PROP_EMAIL, "", "Registered Email Address", "The email address associated with your sagetv-addons license file.  Changes to this value are immediate.");
-		prop.setPersistence(new ServerPropertyPersistence());
-		addProperty(prop);
-		prop = new PluginProperty(SageTVPlugin.CONFIG_FILE, PROP_FILE, "", "Location of License File", "The location of your sagetv-addons license file.  The file path is on your SageTV server.  You probably DO NOT want to change this from a SageClient installation.  Changes to this value are immediate.");
-		prop.setPersistence(new ServerPropertyPersistence());
-		prop.setValidator(new LicenseFileValidator());
-		addProperty(prop);
+		if(!Global.IsClient()) {
+			PluginProperty prop = new PluginProperty(SageTVPlugin.CONFIG_TEXT, PROP_EMAIL, "", "Registered Email Address", "The email address associated with your sagetv-addons license file.  Changes to this value are immediate.");
+			prop.setPersistence(new ServerPropertyPersistence());
+			addProperty(prop);
+			prop = new PluginProperty(SageTVPlugin.CONFIG_FILE, PROP_FILE, "", "Location of License File", "The location of your sagetv-addons license file.  The file path is on your SageTV server.  You probably DO NOT want to change this from a SageClient installation.  Changes to this value are immediate.");
+			prop.setPersistence(new ServerPropertyPersistence());
+			prop.setValidator(new LicenseFileValidator());
+			addProperty(prop);
+		}
 	}
 }

@@ -35,6 +35,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import sagex.api.Configuration;
+import sagex.api.Global;
 import sagex.api.PluginAPI;
 import sagex.api.Utility;
 
@@ -61,7 +62,8 @@ public final class License {
 	}
 
 	static private boolean isPluginEnabled() {
-		for(Object plugin : PluginAPI.GetInstalledPlugins()) {
+		Object[] installed = Global.IsClient() ? PluginAPI.GetInstalledClientPlugins() : PluginAPI.GetInstalledPlugins();
+		for(Object plugin : installed) {
 			if(PluginAPI.GetPluginIdentifier(plugin).equals(Plugin.PLUGIN_ID))
 				return PluginAPI.IsPluginEnabled(plugin);
 		}
@@ -71,13 +73,11 @@ public final class License {
 	private PublicKey key;
 	private LicenseResponse resp;
 	private String registeredEmail, requestor, filePath;
-	private File licenseFile;
 	private Properties props;
 
 	private License(String requestor) {
 		this.requestor = requestor;
 		filePath = Configuration.GetServerProperty(Plugin.PROP_FILE, "");
-		licenseFile = new File(filePath);
 		registeredEmail = Configuration.GetServerProperty(Plugin.PROP_EMAIL, "");
 		resp = new LicenseResponse();
 		props = null;
@@ -99,8 +99,8 @@ public final class License {
 			LOG.warn(requestor + ": " + err);
 			resp.setLicensed(false);
 			resp.setMessage(err);
-		} else if(!Utility.IsFilePath(licenseFile.getAbsolutePath())) {
-			String err = "Cannot read specified license file! [" + licenseFile.getAbsolutePath() + "]";
+		} else if(!Utility.IsFilePath(filePath)) {
+			String err = "Cannot read specified license file on the server! [" + filePath + "]";
 			LOG.warn(requestor + ": " + err);
 			resp.setLicensed(false);
 			resp.setMessage(err);
@@ -130,9 +130,9 @@ public final class License {
 	}
 
 	private void getPayload() throws Exception {
-		String data = Utility.GetFileAsString(licenseFile);
+		String data = Utility.GetFileAsString(new File(filePath));
 		if(data == null || data.length() == 0) {
-			LOG.error("License file is empty! [" + licenseFile.getAbsolutePath() + "]");
+			LOG.error("License file is empty! [" + filePath + "]");
 			return;
 		}
 		initKey();
