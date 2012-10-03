@@ -24,8 +24,8 @@ import java.io.StringReader;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.RSAPublicKeySpec;
+import java.security.PrivateKey;
+import java.security.spec.RSAPrivateKeySpec;
 import java.util.Date;
 import java.util.Properties;
 
@@ -70,7 +70,7 @@ public final class License {
 		return false;
 	}
 
-	private PublicKey key;
+	private PrivateKey key;
 	private LicenseResponse resp;
 	private String registeredEmail, requestor, filePath;
 	private Properties props;
@@ -159,17 +159,17 @@ public final class License {
 	}
 
 	private void initKey() throws Exception {
-		InputStream publicKey = License.class.getResourceAsStream("/com/google/code/sagetvaddons/license/sagetv-addons.pub");
-		if(publicKey != null) {
+		InputStream privateKey = License.class.getResourceAsStream("/com/google/code/sagetvaddons/license/sagetv-addons.private");
+		if(privateKey != null) {
 			ObjectInputStream oin = null;
 			BigInteger mod, exp;
 			try {
-				oin = new ObjectInputStream(new BufferedInputStream(publicKey));
+				oin = new ObjectInputStream(new BufferedInputStream(privateKey));
 				mod = (BigInteger) oin.readObject();
 				exp = (BigInteger) oin.readObject();
-				RSAPublicKeySpec keySpec = new RSAPublicKeySpec(mod, exp);
+				RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(mod, exp);
 				KeyFactory fact = KeyFactory.getInstance("RSA");
-				key = fact.generatePublic(keySpec);
+				key = fact.generatePrivate(keySpec);
 			} finally {
 				if(oin != null)
 					try { oin.close(); } catch(IOException e) { LOG.error("IOError", e); }
