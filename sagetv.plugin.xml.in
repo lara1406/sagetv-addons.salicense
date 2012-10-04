@@ -48,6 +48,12 @@ Most users should NOT need to install this plugin manually.  Other plugins that 
        <ImplementationClass>com.google.code.sagetvaddons.license.Plugin</ImplementationClass>
        <ReleaseNotes><![CDATA[
 ======
+v1.2.0
+======
+
+Support for IBM JREs; requires generation of new license files.
+
+======
 v1.1.1
 ======
  
