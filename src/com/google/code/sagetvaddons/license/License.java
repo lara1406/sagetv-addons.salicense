@@ -27,6 +27,8 @@ public final class License {
 		return FREE_LICENSE;
 	}
 
+	static public void autoConfig(String email, String filePath) {}
+	
 	final private LicenseResponse resp;
 
 	private License() {
