@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--  Copyright 2011 Battams, Derek 												-->
+<!--  Copyright 2011-2013 Battams, Derek 												-->
 <!-- 																				-->       
 <!--   Licensed under the Apache License, Version 2.0 (the "License");				-->
 <!--   you may not use this file except in compliance with the License.				-->
@@ -13,14 +13,11 @@
 <!--   See the License for the specific language governing permissions and			-->
 <!--   limitations under the License.												-->
 <project name="salicense" default="build" basedir=".">
-  <!-- Import svn tasks -->
-  <taskdef resource="org/tigris/subversion/svnant/svnantlib.xml" />
-
   <!-- Project specific props -->
   <property name="sage.jar" value="C:/Program Files/SageTV/SageTV/Sage.jar" />
   <property name="sage.libs" value="C:/Users/dbattams/sagelibs" />
   <property name="src.token" value="@@" />
-  <property name="app.ver" value="1.2.0" />
+  <property name="app.ver" value="1.3.0" />
   <property name="app.res.dir" value="plugins/salicense" />
   <property name="src" value="src" />
   <property name="gc.upload.settings" value="C:/snapshots/gc_login.properties" />
@@ -34,9 +31,6 @@
     <tstamp>
       <format property="app.bld.date" pattern="yyyy.MM.dd" />
     </tstamp>
-    <svn javahl="true">
-            <wcVersion path="." />
-    </svn>
   </target>
   	
   <target name="rmgensrc" description="Delete generated src files">
@@ -51,7 +45,6 @@
   	  <mapper type="glob" from="*.in" to="*"/>
   	  <filterset begintoken="${src.token}" endtoken="${src.token}">
   	    <filter token="VER_NUM" value="${app.ver}"/>
-  	    <filter token="BLD_NUM" value="${revision.max-with-flags}"/>
   	  	<filter token="MOD_DATE" value="${app.bld.date}"/>
   	  </filterset>
     </copy> 
@@ -73,17 +66,12 @@
   	<delete dir="plugin" failonerror="false" />
   	<property name="base" value="plugin/${app.res.dir}" />
     <mkdir dir="${base}" />
-  	<filelist id="bins" dir="." files="salicense.log4j.properties" />
-  	<copy todir="${base}">
-  	  <filelist refid="bins" />
-  	</copy>
-  	<copy todir="bld/com/google/code/sagetvaddons/license/" file="src/com/google/code/sagetvaddons/license/sagetv-addons.private" />
   	<jar destfile="salicense.jar" basedir="bld" />
-  	<zip destfile="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" basedir="." includes="salicense.jar" />
-  	<checksum file="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" property="bin.jar.md5" />
+  	<zip destfile="salicense-jar-${app.ver}.zip" basedir="." includes="salicense.jar" />
+  	<checksum file="salicense-jar-${app.ver}.zip" property="bin.jar.md5" />
   	<replace file="sagetv.plugin.xml" token="@@JAR_MD5@@" value="${bin.jar.md5}" />
-  	<zip destfile="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" basedir="plugin" />
-  	<checksum file="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" property="bin.conf.md5" />
+  	<zip destfile="salicense-conf-${app.ver}.zip" basedir="plugin" />
+  	<checksum file="salicense-conf-${app.ver}.zip" property="bin.conf.md5" />
   	<replace file="sagetv.plugin.xml" token="@@CONF_MD5@@" value="${bin.conf.md5}" />
   </target>
 
@@ -94,8 +82,8 @@
 	<fail message="gc.username must be defined in ${gc.upload.settings}" unless="gc.username" />
 	<fail message="gc.password must be defined in ${gc.upload.settings}" unless="gc.password" />
 	<taskdef classname="net.bluecow.googlecode.ant.GoogleCodeUploadTask" name="gcupload" />
-	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" targetfilename="salicense-jar-${app.ver}.${revision.max-with-flags}.zip" summary="sagetv-addons license server snapshot build (plugin JAR)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
-	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" targetfilename="salicense-conf-${app.ver}.${revision.max-with-flags}.zip" summary="sagetv-addons license server snapshot build (config files)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="salicense-jar-${app.ver}.zip" targetfilename="salicense-jar-${app.ver}.zip" summary="sagetv-addons license server snapshot build (plugin JAR)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
+	<gcupload username="${gc.username}" password="${gc.password}" projectname="sagetv-addons" filename="salicense-conf-${app.ver}.zip" targetfilename="salicense-conf-${app.ver}.zip" summary="sagetv-addons license server snapshot build (config files)" labels="QA-Snapshot,Type-Plugin,OpSys-All" />
   </target>
 
   <target name="submit" depends="deliver" description="Submit plugin to SageTV repository">
